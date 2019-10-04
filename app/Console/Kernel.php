@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\UpdateUserInFromVk;
 use App\Jobs\TestPidors;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -27,6 +28,7 @@ class Kernel extends ConsoleKernel
     {
 
         $schedule->job(new TestPidors())->daily();
+        $schedule->command(new UpdateUserInFromVk())->daily();
 
         // $schedule->command('inspire')
         //          ->hourly();
