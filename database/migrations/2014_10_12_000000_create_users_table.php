@@ -34,6 +34,7 @@ class CreateUsersTable extends Migration
             $table->dateTime('visited_at')->nullable();
 
             $table->boolean('is_pidor')->default(false);
+            $table->integer('pidor_rate')->default(0);
 
 
             $table->timestamps();

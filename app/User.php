@@ -13,6 +13,7 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Spatie\Regex\Regex;
 
 /**
@@ -52,6 +53,8 @@ use Spatie\Regex\Regex;
  * @method static Builder|User whereVisitedAt($value)
  * @method static Builder|User whereVkUserId($value)
  * @mixin Eloquent
+ * @property int $pidor_rate
+ * @method static Builder|User wherePidorRate($value)
  */
 class User extends Authenticatable
 {
@@ -60,7 +63,8 @@ class User extends Authenticatable
     const PIDOR_CHANCE = 10;
 
     protected $attributes = [
-        'is_pidor' => false
+        'is_pidor' => false,
+        'pidor_rate' => 0
     ];
 
     /**
@@ -154,5 +158,10 @@ class User extends Authenticatable
 
             event(new UserBecamePidor($this));
         }
+    }
+
+    public function calcPidorRate() {
+        $this->pidor_rate = DB::table('pidor_logs')->where('user_id', $this->id)->count();
+        $this->save();
     }
 }

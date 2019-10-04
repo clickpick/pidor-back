@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Events\UserBecamePidor;
 use App\Events\UserCreated;
 use App\Listeners\CheckUserForPidor;
 use App\Listeners\FillPersonalDataFromVk;
+use App\Listeners\WritePidorInLog;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -21,6 +23,9 @@ class EventServiceProvider extends ServiceProvider
         UserCreated::class => [
             CheckUserForPidor::class,
             FillPersonalDataFromVk::class,
+        ],
+        UserBecamePidor::class => [
+            WritePidorInLog::class
         ]
     ];
 
