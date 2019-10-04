@@ -15,11 +15,27 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+
+            $table->unsignedBigInteger('vk_user_id')->unique();
+
+            $table->boolean('notifications_are_enabled')->default(false);
+            $table->boolean('messages_are_enabled')->default(false);
+
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('avatar_200')->nullable();
+
+            $table->date('bdate')->nullable();
+            $table->tinyInteger('sex')->default(0)->index();
+
+
+            $table->tinyInteger('utc_offset')->nullable();
+
+            $table->dateTime('visited_at')->nullable();
+
+            $table->boolean('is_pidor')->default(false);
+
+
             $table->timestamps();
         });
     }

@@ -46,6 +46,11 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+
+        'vk_user' => [
+            'driver' => 'vk_user',
+            'provider' => 'users'
+        ],
     ],
 
     /*

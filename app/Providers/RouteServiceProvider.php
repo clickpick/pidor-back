@@ -39,6 +39,8 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapWebRoutes();
 
+        $this->mapVkUserRoutes();
+
         //
     }
 
@@ -69,5 +71,12 @@ class RouteServiceProvider extends ServiceProvider
              ->middleware('api')
              ->namespace($this->namespace)
              ->group(base_path('routes/api.php'));
+    }
+
+    protected function mapVkUserRoutes() {
+        Route::prefix('vk')
+            ->middleware('vk_user')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/vk_user.php'));
     }
 }

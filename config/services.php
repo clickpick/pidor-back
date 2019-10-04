@@ -30,4 +30,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+
+    'vk' => [
+        'app' => [
+            'id' => env('VK_APP_ID'),
+            'secret' => env('VK_APP_SECRET'),
+            'service' => env('VK_APP_SERVICE_KEY'),
+        ],
+    ]
+
 ];
