@@ -1,3 +1,3 @@
 <?php
 
-Route::get('me', 'MeController@me');
+Route::post('auth', 'MeController@me');
