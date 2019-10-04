@@ -2,10 +2,13 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Collection;
 use VK\Client\VKApiClient;
+use VK\Exceptions\Api\VKApiPrivateProfileException;
+use VK\Exceptions\VKApiException;
+use VK\Exceptions\VKClientException;
 
-class VkClient {
+class VkClient
+{
     protected $client;
     private $accessToken;
 
@@ -17,7 +20,8 @@ class VkClient {
         $this->accessToken = config('services.vk.app.service');
     }
 
-    public function getUsers($ids, array $fields) {
+    public function getUsers($ids, array $fields)
+    {
 
         $isFew = is_array($ids);
 
@@ -27,5 +31,23 @@ class VkClient {
         ]);
 
         return $isFew ? $response : $response[0];
+    }
+
+
+    /**
+     * @param $vkId
+     * @return mixed
+     * @throws VKApiException
+     * @throws VKClientException
+     */
+    public function getFriendIdsOfUser($vkId)
+    {
+        $response = $this->client->friends()->get($this->accessToken, [
+            'user_id' => $vkId,
+            'order' => 'hints',
+            'fields' => []
+        ]);
+
+        return $response;
     }
 }

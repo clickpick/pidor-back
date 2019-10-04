@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Spatie\Regex\Regex;
 
+
 /**
  * App\User
  *
@@ -29,8 +30,8 @@ use Spatie\Regex\Regex;
  * @property string|null $bdate
  * @property int $sex
  * @property int|null $utc_offset
- * @property string|null $visited_at
- * @property bool $is_pidor
+ * @property Carbon|null $visited_at
+ * @property int $pidor_rate
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read DatabaseNotificationCollection|DatabaseNotification[] $notifications
@@ -43,18 +44,16 @@ use Spatie\Regex\Regex;
  * @method static Builder|User whereCreatedAt($value)
  * @method static Builder|User whereFirstName($value)
  * @method static Builder|User whereId($value)
- * @method static Builder|User whereIsPidor($value)
  * @method static Builder|User whereLastName($value)
  * @method static Builder|User whereMessagesAreEnabled($value)
  * @method static Builder|User whereNotificationsAreEnabled($value)
+ * @method static Builder|User wherePidorRate($value)
  * @method static Builder|User whereSex($value)
  * @method static Builder|User whereUpdatedAt($value)
  * @method static Builder|User whereUtcOffset($value)
  * @method static Builder|User whereVisitedAt($value)
  * @method static Builder|User whereVkUserId($value)
  * @mixin Eloquent
- * @property int $pidor_rate
- * @method static Builder|User wherePidorRate($value)
  */
 class User extends Authenticatable
 {
@@ -63,7 +62,6 @@ class User extends Authenticatable
     const PIDOR_CHANCE = 10;
 
     protected $attributes = [
-        'is_pidor' => false,
         'pidor_rate' => 0
     ];
 
@@ -152,16 +150,11 @@ class User extends Authenticatable
 
 
     public function testPidor() {
-        if (rand(1, 100) <= self::PIDOR_CHANCE) {
-            $this->is_pidor = true;
-            $this->save();
+        $this->pidor_rate = rand(1, 100);
+        $this->save();
 
+        if ($this->pidor_rate === 100) {
             event(new UserBecamePidor($this));
         }
-    }
-
-    public function calcPidorRate() {
-        $this->pidor_rate = DB::table('pidor_logs')->where('user_id', $this->id)->count();
-        $this->save();
     }
 }

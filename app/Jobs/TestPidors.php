@@ -31,7 +31,7 @@ class TestPidors implements ShouldQueue
     public function handle()
     {
         User::chunk(200, function(User $user) {
-           $user->testPidor();
+//           $user->testPidor();
         });
     }
 }

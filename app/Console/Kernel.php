@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 
-        $schedule->job(new TestPidors())->daily();
+//        $schedule->job(new TestPidors())->daily();
         $schedule->command(new UpdateUserInFromVk())->daily();
 
         // $schedule->command('inspire')

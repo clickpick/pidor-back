@@ -23,9 +23,6 @@ class EventServiceProvider extends ServiceProvider
         UserCreated::class => [
             CheckUserForPidor::class,
             FillPersonalDataFromVk::class,
-        ],
-        UserBecamePidor::class => [
-            WritePidorInLog::class
         ]
     ];
 
