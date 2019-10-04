@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\UserBecamePidor;
 use App\Events\UserCreated;
 use App\Services\VkClient;
 use Eloquent;
@@ -55,6 +56,12 @@ use Spatie\Regex\Regex;
 class User extends Authenticatable
 {
     use Notifiable;
+
+    const PIDOR_CHANCE = 10;
+
+    protected $attributes = [
+        'is_pidor' => false
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -137,5 +144,15 @@ class User extends Authenticatable
         }
 
         return self::firstOrCreate(['vk_user_id' => $vkId]);
+    }
+
+
+    public function testPidor() {
+        if (rand(1, 100) <= self::PIDOR_CHANCE) {
+            $this->is_pidor = true;
+            $this->save();
+
+            event(new UserBecamePidor($this));
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\UserCreated;
+use App\Listeners\CheckUserForPidor;
 use App\Listeners\FillPersonalDataFromVk;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -18,7 +19,8 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         UserCreated::class => [
-            FillPersonalDataFromVk::class
+            CheckUserForPidor::class,
+            FillPersonalDataFromVk::class,
         ]
     ];
 
