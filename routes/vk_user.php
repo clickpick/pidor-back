@@ -3,4 +3,6 @@
 Route::post('auth', 'MeController@me');
 Route::get('friends', 'MeController@getFriends');
 
-Route::get('pidor_of_the_day', 'PidorOfTheDayController@current');
+Route::get('pidor-of-the-day', 'PidorOfTheDayController@current');
+
+Route::post('post-story', 'MeController@postStory');
