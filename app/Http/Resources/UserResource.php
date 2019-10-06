@@ -30,7 +30,8 @@ class UserResource extends JsonResource
             'messages_are_enabled' => $this->messages_are_enabled,
             'notifications_are_enabled' => $this->notifications_are_enabled,
             'pidor_rate' => $this->pidor_rate,
-            'gif' => $this->gif
+            'gif' => $this->gif,
+            'phrase' => $this->getPhrase()
         ];
     }
 }

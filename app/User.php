@@ -65,6 +65,13 @@ class User extends Authenticatable
 
     const PIDOR_CHANCE = 10;
 
+    const PHRASES = [
+        25 => 'такое',
+        50 => 'набираешь',
+        75 => 'почти гей',
+        100 => 'пидрила'
+    ];
+
     protected $attributes = [
         'pidor_rate' => 0
     ];
@@ -174,5 +181,15 @@ class User extends Authenticatable
 
         $this->gif = $mp4Gif;
         $this->save();
+    }
+
+    private function getPhrases() {
+        return collect(self::PHRASES);
+    }
+
+    public function getPhrase() {
+        return $this->getPhrases()->first(function($value, $key) {
+            return $this->pidor_rate < $key;
+        });
     }
 }
