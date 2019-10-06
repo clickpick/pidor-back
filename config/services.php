@@ -37,6 +37,9 @@ return [
             'secret' => env('VK_APP_SECRET'),
             'service' => env('VK_APP_SERVICE_KEY'),
         ],
-    ]
+    ],
 
+    'giphy' => [
+        'key' => env('GIPHY_KEY')
+    ]
 ];

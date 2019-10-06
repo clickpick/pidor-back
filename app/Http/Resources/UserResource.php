@@ -29,7 +29,8 @@ class UserResource extends JsonResource
             'utc_offset' => $this->utc_offset,
             'messages_are_enabled' => $this->messages_are_enabled,
             'notifications_are_enabled' => $this->notifications_are_enabled,
-            'pidor_rate' => $this->pidor_rate
+            'pidor_rate' => $this->pidor_rate,
+            'gif' => $this->gif
         ];
     }
 }

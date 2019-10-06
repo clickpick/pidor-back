@@ -4,8 +4,10 @@ namespace App;
 
 use App\Events\UserBecamePidor;
 use App\Events\UserCreated;
+use App\Services\Facades\Giphy;
 use App\Services\VkClient;
 use Eloquent;
+use Exception;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -54,6 +56,8 @@ use Spatie\Regex\Regex;
  * @method static Builder|User whereVisitedAt($value)
  * @method static Builder|User whereVkUserId($value)
  * @mixin Eloquent
+ * @property string|null $gif
+ * @method static Builder|User whereGif($value)
  */
 class User extends Authenticatable
 {
@@ -156,5 +160,19 @@ class User extends Authenticatable
         if ($this->pidor_rate === 100) {
             event(new UserBecamePidor($this));
         }
+    }
+
+    public function updateGif() {
+        try {
+            $mp4Gif = Giphy::random([
+                'tag' => 'gay',
+                'rating' => 'R'
+            ])['data']['image_mp4_url'];
+        } catch (Exception $e) {
+            $mp4Gif = null;
+        }
+
+        $this->gif = $mp4Gif;
+        $this->save();
     }
 }

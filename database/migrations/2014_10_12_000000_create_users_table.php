@@ -35,6 +35,8 @@ class CreateUsersTable extends Migration
 
             $table->tinyInteger('pidor_rate')->default(0);
 
+            $table->string('gif')->nullable();
+
             $table->timestamps();
         });
     }
