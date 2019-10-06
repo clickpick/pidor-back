@@ -32,7 +32,7 @@ class MeController extends Controller
         }
 
         /** @var array $friendIds */
-        $registeredFriends = User::whereIn('vk_user_id', $friendIds['items'])->orderBy('is_pidor', 'desc')->paginate();
+        $registeredFriends = User::whereIn('vk_user_id', $friendIds['items'])->paginate();
 
         return UserResource::collection($registeredFriends);
     }
