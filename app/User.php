@@ -8,14 +8,12 @@ use App\Services\Facades\Giphy;
 use App\Services\VkClient;
 use Eloquent;
 use Exception;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use Spatie\Regex\Regex;
 
 
@@ -66,10 +64,22 @@ class User extends Authenticatable
     const PIDOR_CHANCE = 10;
 
     const PHRASES = [
-        25 => 'такое',
-        50 => 'набираешь',
-        75 => 'почти гей',
-        100 => 'пидрила'
+        25 => [
+            'title' => 'такое',
+            'subtitle' => 'давай не это'
+        ],
+        50 => [
+            'title' => 'набираешь',
+            'subtitle' => 'поднажми'
+        ],
+        75 => [
+            'title' => 'почти гей',
+            'subtitle' => 'ага, ждем'
+        ],
+        100 => [
+            'title' => 'пидрила',
+            'subtitle' => 'красава, че'
+        ]
     ];
 
     protected $attributes = [
@@ -107,7 +117,8 @@ class User extends Authenticatable
     ];
 
 
-    public function fillPersonalInfoFromVk($data = null) {
+    public function fillPersonalInfoFromVk($data = null)
+    {
         $data = $data ?? (new VkClient())->getUsers($this->vk_user_id, ['first_name', 'last_name', 'photo_200', 'timezone', 'sex', 'bdate']);
 
         $this->first_name = $data['first_name'] ?? null;
@@ -150,7 +161,8 @@ class User extends Authenticatable
      * @param $vkId
      * @return User
      */
-    public static function getByVkId($vkId) : ?self {
+    public static function getByVkId($vkId): ?self
+    {
 
         if (!$vkId) {
             return null;
@@ -160,7 +172,8 @@ class User extends Authenticatable
     }
 
 
-    public function testPidor() {
+    public function testPidor()
+    {
         $this->pidor_rate = rand(1, 100);
         $this->save();
 
@@ -169,7 +182,8 @@ class User extends Authenticatable
         }
     }
 
-    public function updateGif() {
+    public function updateGif()
+    {
         try {
             $mp4Gif = Giphy::random([
                 'tag' => 'gay',
@@ -183,12 +197,14 @@ class User extends Authenticatable
         $this->save();
     }
 
-    private function getPhrases() {
+    private function getPhrases()
+    {
         return collect(self::PHRASES);
     }
 
-    public function getPhrase() {
-        return $this->getPhrases()->first(function($value, $key) {
+    public function getPhrase()
+    {
+        return $this->getPhrases()->first(function ($value, $key) {
             return $this->pidor_rate < $key;
         });
     }
