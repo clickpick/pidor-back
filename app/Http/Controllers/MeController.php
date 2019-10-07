@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostStoryRequest;
 use App\Http\Resources\UserResource;
 use App\Services\VkClient;
 use App\User;
@@ -35,5 +36,9 @@ class MeController extends Controller
         $registeredFriends = User::whereIn('vk_user_id', $friendIds['items'])->paginate();
 
         return UserResource::collection($registeredFriends);
+    }
+
+    public function postStory(PostStoryRequest $request) {
+        (new VkClient())->postStory($request->access_token);
     }
 }

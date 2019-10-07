@@ -2,8 +2,12 @@
 
 namespace App\Services;
 
+use GuzzleHttp\Client;
 use VK\Client\VKApiClient;
+use VK\Exceptions\Api\VKApiBlockedException;
+use VK\Exceptions\Api\VKApiMessagesUserBlockedException;
 use VK\Exceptions\Api\VKApiPrivateProfileException;
+use VK\Exceptions\Api\VKApiStoryIncorrectReplyPrivacyException;
 use VK\Exceptions\VKApiException;
 use VK\Exceptions\VKClientException;
 
@@ -49,5 +53,34 @@ class VkClient
         ]);
 
         return $response;
+    }
+
+    /**
+     * @param $accessToken
+     * @throws VKApiException
+     * @throws VKClientException
+     * @throws VKApiBlockedException
+     * @throws VKApiMessagesUserBlockedException
+     * @throws VKApiStoryIncorrectReplyPrivacyException
+     */
+    public function postStory($accessToken) {
+        $response = $this->client->stories()->getPhotoUploadServer($accessToken, [
+            'add_to_news' => 1,
+        ]);
+
+        $uploadUrl = $response['upload_url'];
+
+        $client = new Client();
+
+        $client->post($uploadUrl, [
+            'multipart' => [
+                [
+                    'name'     => 'file',
+                    'contents' => fopen(storage_path('app/stories/story.png'), 'r')
+                ],
+            ]
+        ]);
+
+
     }
 }
