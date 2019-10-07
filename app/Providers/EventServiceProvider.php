@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use App\Events\StoryPosted;
 use App\Events\UserBecamePidor;
 use App\Events\UserCreated;
+use App\Listeners\AttachStoryPosted;
 use App\Listeners\CheckUserForPidor;
 use App\Listeners\FillPersonalDataFromVk;
+use App\Listeners\RewardForStoryPosted;
 use App\Listeners\SetGif;
 use App\Listeners\WritePidorInLog;
 use Illuminate\Auth\Events\Registered;
@@ -25,6 +28,9 @@ class EventServiceProvider extends ServiceProvider
             CheckUserForPidor::class,
             SetGif::class,
             FillPersonalDataFromVk::class,
+        ],
+        StoryPosted::class => [
+            RewardForStoryPosted::class
         ]
     ];
 

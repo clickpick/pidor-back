@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PostStoryRequest;
 use App\Http\Resources\UserResource;
+use App\PublishedStory;
 use App\Services\VkClient;
 use App\User;
 use Illuminate\Http\Request;
@@ -39,6 +40,16 @@ class MeController extends Controller
     }
 
     public function postStory(PostStoryRequest $request) {
-        (new VkClient())->postStory($request->upload_url);
+        $user = Auth::user();
+
+        if ($user->storyIsPosted(PublishedStory::CONFESSION)) {
+            abort(403);
+        }
+
+        $user->postStory(PublishedStory::CONFESSION, $request->upload_url);
+
+        $user->refresh();
+
+        return new UserResource($user);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\StoryPosted;
 use App\Events\UserBecamePidor;
 use App\Events\UserCreated;
 use App\Services\Facades\Giphy;
@@ -9,6 +10,7 @@ use App\Services\VkClient;
 use Eloquent;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -56,6 +58,10 @@ use Spatie\Regex\Regex;
  * @mixin Eloquent
  * @property string|null $gif
  * @method static Builder|User whereGif($value)
+ * @property-read Collection|PublishedStory[] $publishedStories
+ * @property-read int|null $published_stories_count
+ * @property-read Collection|RateTransaction[] $rateTransactions
+ * @property-read int|null $rate_transactions_count
  */
 class User extends Authenticatable
 {
@@ -116,6 +122,16 @@ class User extends Authenticatable
         'created' => UserCreated::class
     ];
 
+    public function publishedStories()
+    {
+        return $this->hasMany(PublishedStory::class);
+    }
+
+    public function rateTransactions()
+    {
+        return $this->hasMany(RateTransaction::class);
+    }
+
 
     public function fillPersonalInfoFromVk($data = null)
     {
@@ -174,7 +190,7 @@ class User extends Authenticatable
 
     public function testPidor()
     {
-        $this->pidor_rate = rand(1, 100);
+        $this->plusRate(rand(1, 100));
         $this->save();
 
         if ($this->pidor_rate === 100) {
@@ -207,5 +223,86 @@ class User extends Authenticatable
         return $this->getPhrases()->first(function ($value, $key) {
             return $this->pidor_rate < $key;
         });
+    }
+
+    public function postStory($type, $uploadUrl)
+    {
+        (new VkClient())->postStory($uploadUrl);
+
+        $publishedStory = $this->publishedStories()->create([
+            'type' => $type
+        ]);
+
+        event(new StoryPosted($publishedStory));
+    }
+
+    public function storyIsPosted($type)
+    {
+        return $this->publishedStories()->where('type', $type)->exists();
+    }
+
+    public function recalcRate()
+    {
+        $balance = $this->rateTransactions()->get()->reduce(function ($carry, $item) {
+            if ($item->type == RateTransaction::IN) {
+                return $carry + $item->value;
+            }
+
+            if ($item->type == RateTransaction::OUT) {
+                return $carry - $item->value;
+            }
+
+            return $carry;
+        }, 0);
+
+        $balance = min(100, $balance);
+        $balance = max(0, $balance);
+
+        $this->pidor_rate = $balance;
+        $this->save();
+    }
+
+
+    public function minusRate($value, $linkable = null)
+    {
+
+        if ($this->pidor_rate - $value < 0) {
+            $value = $this->pidor_rate;
+        }
+
+        $rateTransaction = $this->rateTransactions()->make([
+            'type' => RateTransaction::OUT,
+            'value' => $value
+        ]);
+
+
+        if ($linkable) {
+            $rateTransaction->linkable()->associate($linkable);
+        }
+
+        $rateTransaction->save();
+
+        $this->recalcRate();
+    }
+
+    public function plusRate($value, $linkable = null)
+    {
+
+        if ($this->pidor_rate + $value > 100) {
+            $value = 100 - $this->pidor_rate;
+        }
+
+        $rateTransaction = $this->rateTransactions()->make([
+            'type' => RateTransaction::IN,
+            'value' => $value
+        ]);
+
+        if ($linkable) {
+            $rateTransaction->linkable()->associate($linkable);
+        }
+
+        $rateTransaction->save();
+
+        $this->recalcRate();
     }
 }
