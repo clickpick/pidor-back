@@ -29,7 +29,7 @@ class Kernel extends ConsoleKernel
     {
 
 //        $schedule->job(new TestPidors())->daily();
-        $schedule->command(new UpdateUserInFromVk())->daily();
+        $schedule->command(UpdateUserInFromVk::class)->daily();
 
         $schedule->job(new CheckDonates())->everyMinute();
 
