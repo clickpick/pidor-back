@@ -57,4 +57,20 @@ class PidorOfTheDay extends Model
 
         return $user;
     }
+
+    public static function queueUser(User $user) {
+        $lastPidorOfTheDay = self::where('pidor_at', '>', Carbon::now())->orderBy('pidor_at', 'desc')->first();
+
+        if (!$lastPidorOfTheDay) {
+            self::create([
+               'pidor_at' => Carbon::now()->addDay(),
+               'user_id' => $user->id
+            ]);
+        } else {
+            self::create([
+                'pidor_at' => $lastPidorOfTheDay->pidor_at->addDay(),
+                'user_id' => $user->id
+            ]);
+        }
+    }
 }

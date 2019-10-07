@@ -1,6 +1,7 @@
 <?php
 
 use App\Providers\GiphyServiceProvider;
+use App\Providers\VkDonateServiceProvider;
 
 return [
 
@@ -177,7 +178,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        GiphyServiceProvider::class
+        GiphyServiceProvider::class,
+        VkDonateServiceProvider::class
 
     ],
 

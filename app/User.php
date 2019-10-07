@@ -62,6 +62,8 @@ use Spatie\Regex\Regex;
  * @property-read int|null $published_stories_count
  * @property-read Collection|RateTransaction[] $rateTransactions
  * @property-read int|null $rate_transactions_count
+ * @property-read Collection|Donate[] $donates
+ * @property-read int|null $donates_count
  */
 class User extends Authenticatable
 {
@@ -135,6 +137,10 @@ class User extends Authenticatable
     public function rateTransactions()
     {
         return $this->hasMany(RateTransaction::class);
+    }
+
+    public function donates() {
+        return $this->hasMany(Donate::class);
     }
 
 

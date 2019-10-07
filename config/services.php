@@ -41,5 +41,9 @@ return [
 
     'giphy' => [
         'key' => env('GIPHY_KEY')
+    ],
+
+    'vk_donate' => [
+        'key' => env('VK_DONATE_KEY')
     ]
 ];
