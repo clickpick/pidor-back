@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\PublishedStory;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -31,7 +32,10 @@ class UserResource extends JsonResource
             'notifications_are_enabled' => $this->notifications_are_enabled,
             'pidor_rate' => $this->pidor_rate,
             'gif' => $this->gif,
-            'phrase' => $this->getPhrase()
+            'phrase' => $this->getPhrase(),
+            'published_stories' => $this->publishedStories->map(function (PublishedStory $publishedStory) {
+                return $publishedStory->type;
+            })
         ];
     }
 }

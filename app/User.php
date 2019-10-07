@@ -92,6 +92,10 @@ class User extends Authenticatable
         'pidor_rate' => 0
     ];
 
+    protected $with = [
+        'publishedStories'
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
