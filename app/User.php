@@ -114,7 +114,8 @@ class User extends Authenticatable
         'notifications_are_enabled' => 'boolean',
         'messages_are_enabled' => 'boolean',
         'visited_at' => 'date',
-        'is_pidor' => 'boolean'
+        'is_pidor' => 'boolean',
+        'vk_user_id' => 'integer'
     ];
 
 
@@ -228,6 +229,10 @@ class User extends Authenticatable
     public function postStory($type, $uploadUrl)
     {
         (new VkClient())->postStory($uploadUrl);
+
+        if ($this->storyIsPosted($type)) {
+            return;
+        }
 
         $publishedStory = $this->publishedStories()->create([
             'type' => $type

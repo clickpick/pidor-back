@@ -42,10 +42,6 @@ class MeController extends Controller
     public function postStory(PostStoryRequest $request) {
         $user = Auth::user();
 
-        if ($user->storyIsPosted(PublishedStory::CONFESSION)) {
-            abort(403);
-        }
-
         $user->postStory(PublishedStory::CONFESSION, $request->upload_url);
 
         $user->refresh();
