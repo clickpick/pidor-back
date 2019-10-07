@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 /**
  * Class PostStoryRequest
  * @package App\Http\Requests
- * @property $access_token
+ * @property $upload_url
  */
 class PostStoryRequest extends FormRequest
 {
@@ -29,7 +29,7 @@ class PostStoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'access_token' => 'required|string'
+            'upload_url' => 'required|string'
         ];
     }
 }

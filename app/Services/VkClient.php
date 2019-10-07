@@ -56,19 +56,9 @@ class VkClient
     }
 
     /**
-     * @param $accessToken
-     * @throws VKApiException
-     * @throws VKClientException
-     * @throws VKApiBlockedException
-     * @throws VKApiMessagesUserBlockedException
-     * @throws VKApiStoryIncorrectReplyPrivacyException
+     * @param $uploadUrl
      */
-    public function postStory($accessToken) {
-        $response = $this->client->stories()->getPhotoUploadServer($accessToken, [
-            'add_to_news' => 1,
-        ]);
-
-        $uploadUrl = $response['upload_url'];
+    public function postStory($uploadUrl) {
 
         $client = new Client();
 
@@ -80,7 +70,5 @@ class VkClient
                 ],
             ]
         ]);
-
-
     }
 }

@@ -39,6 +39,6 @@ class MeController extends Controller
     }
 
     public function postStory(PostStoryRequest $request) {
-        (new VkClient())->postStory($request->access_token);
+        (new VkClient())->postStory($request->upload_url);
     }
 }
