@@ -323,7 +323,11 @@ class User extends Authenticatable
         $this->recalcRate();
     }
 
-    public function generateConfessionStory() {
+    /**
+     * @return \Intervention\Image\Image
+     */
+    public function generateConfessionStory() : \Intervention\Image\Image
+    {
         $template = Image::make(storage_path('app/stories/template.png'));
 
 
@@ -340,7 +344,7 @@ class User extends Authenticatable
             $template->insert($avatar, 'top-left', 451, 721);
         }
 
-        $template->text("{$this->pidor_rate}% пидор", 540, 1048, function($font) {
+        $template->text("{$this->pidor_rate}% пидор", 540, 1048, function ($font) {
             $font->file(storage_path('app/stories/Roboto-Bold.ttf'));
             $font->size(115);
             $font->color('#5FCBFF');
@@ -350,7 +354,7 @@ class User extends Authenticatable
 
 
         $phrase = $this->getPhrase()['title'];
-        $template->text($phrase, 540, 1203, function($font) {
+        $template->text($phrase, 540, 1203, function ($font) {
             $font->file(storage_path('app/stories/Roboto-Regular.ttf'));
             $font->size(46);
             $font->color('#99A2AD');

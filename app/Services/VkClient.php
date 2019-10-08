@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\Image;
 use VK\Client\VKApiClient;
 use VK\Exceptions\Api\VKApiBlockedException;
 use VK\Exceptions\Api\VKApiMessagesUserBlockedException;
@@ -59,17 +62,23 @@ class VkClient
      * @param $uploadUrl
      * @param $image
      */
-    public function postStory($uploadUrl, $image) {
+    public function postStory($uploadUrl, Image $image) {
 
         $client = new Client();
+
+        $fileName = storage_path('app/stories/temp/' . Str::random() . '.jpg');
+
+        $image->save($fileName);
 
         $client->post($uploadUrl, [
             'multipart' => [
                 [
                     'name'     => 'file',
-                    'contents' => $image->stream('jpg')
+                    'contents' => fopen($fileName, 'r')
                 ],
             ]
         ]);
+
+        unlink($fileName);
     }
 }
