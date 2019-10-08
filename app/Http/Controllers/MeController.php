@@ -62,7 +62,7 @@ class MeController extends Controller
     public function givePidorRate(GivePidorRateRequest $request) {
         $sender = Auth::user();
 
-        $acceptor = User::whereVkUserId($request->acceptor_id);
+        $acceptor = User::find($request->acceptor_id);
 
         $friendIds = collect((new VkClient())->getFriendIdsOfUser($sender->vk_user_id)['items']);
 

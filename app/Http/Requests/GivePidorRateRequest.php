@@ -30,7 +30,7 @@ class GivePidorRateRequest extends FormRequest
     public function rules()
     {
         return [
-            'acceptor_id' => 'required|integer|exists:users,vk_user_id|' . Rule::notIn([$this->user()])
+            'acceptor_id' => 'required|integer|exists:users,id|' . Rule::notIn([$this->user()->id])
         ];
     }
 }
