@@ -16,6 +16,7 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Intervention\Image\AbstractShape;
 use Intervention\Image\Facades\Image;
 use Spatie\Regex\Regex;
@@ -66,6 +67,10 @@ use Spatie\Regex\Regex;
  * @property-read int|null $rate_transactions_count
  * @property-read Collection|Donate[] $donates
  * @property-read int|null $donates_count
+ * @property-read Collection|PidorFeedback[] $pidorFeedbackAsAcceptor
+ * @property-read int|null $pidor_feedback_as_acceptor_count
+ * @property-read Collection|PidorFeedback[] $pidorFeedbackAsSender
+ * @property-read int|null $pidor_feedback_as_sender_count
  */
 class User extends Authenticatable
 {
@@ -141,8 +146,19 @@ class User extends Authenticatable
         return $this->hasMany(RateTransaction::class);
     }
 
-    public function donates() {
+    public function donates()
+    {
         return $this->hasMany(Donate::class);
+    }
+
+    public function pidorFeedbackAsSender()
+    {
+        return $this->hasMany(PidorFeedback::class, 'sender_id');
+    }
+
+    public function pidorFeedbackAsAcceptor()
+    {
+        return $this->hasMany(PidorFeedback::class, 'acceptor_id');
     }
 
 
@@ -363,5 +379,17 @@ class User extends Authenticatable
         });
 
         return $template;
+    }
+
+    public function givePidorRateTo(User $acceptor) {
+
+        DB::transaction(function() use ($acceptor) {
+            $pidorFeedback = $this->pidorFeedbackAsSender()->create([
+                'acceptor_id' => $acceptor->id,
+                'value' => PidorFeedback::VALUE
+            ]);
+
+            $acceptor->plusRate($pidorFeedback->value, $pidorFeedback);
+        });
     }
 }

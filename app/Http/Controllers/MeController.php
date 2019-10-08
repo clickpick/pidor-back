@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GivePidorRateRequest;
 use App\Http\Requests\PostStoryRequest;
 use App\Http\Resources\UserResource;
 use App\PublishedStory;
@@ -56,5 +57,23 @@ class MeController extends Controller
         $user->refresh();
 
         return new UserResource($user);
+    }
+
+    public function givePidorRate(GivePidorRateRequest $request) {
+        $sender = Auth::user();
+
+        $acceptor = User::whereVkUserId($request->acceptor_id);
+
+        $friendIds = collect((new VkClient())->getFriendIdsOfUser($sender->vk_user_id)['items']);
+
+        if (!$friendIds->contains($acceptor->vk_user_id)) {
+            abort(403);
+        }
+
+        if ($sender->pidorFeedbackAsSender()->where('acceptor_id', $acceptor->id)->exists()) {
+            abort(403);
+        }
+
+        $sender->givePidorRateTo($acceptor);
     }
 }
