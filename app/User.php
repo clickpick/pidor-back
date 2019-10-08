@@ -16,6 +16,8 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Intervention\Image\AbstractShape;
+use Intervention\Image\Facades\Image;
 use Spatie\Regex\Regex;
 
 
@@ -238,7 +240,7 @@ class User extends Authenticatable
 
     public function postStory($type, $uploadUrl)
     {
-        (new VkClient())->postStory($uploadUrl);
+        (new VkClient())->postStory($uploadUrl, $this->generateConfessionStory());
 
         if ($this->storyIsPosted($type)) {
             return;
@@ -319,5 +321,43 @@ class User extends Authenticatable
         $rateTransaction->save();
 
         $this->recalcRate();
+    }
+
+    public function generateConfessionStory() {
+        $template = Image::make(storage_path('app/stories/template.png'));
+
+
+        if ($this->avatar_200) {
+            $circleMask = Image::canvas(178, 178);
+            $circleMask->circle(178, 178 / 2, 178 / 2, function (AbstractShape $draw) {
+                $draw->background('#fff');
+            });
+
+            $avatar = Image::make($this->avatar_200);
+            $avatar->resize(178, 178);
+            $avatar->mask($circleMask, false);
+
+            $template->insert($avatar, 'top-left', 451, 721);
+        }
+
+        $template->text("{$this->pidor_rate}% пидор", 540, 1048, function($font) {
+            $font->file(storage_path('app/stories/Roboto-Bold.ttf'));
+            $font->size(115);
+            $font->color('#5FCBFF');
+            $font->align('center');
+            $font->valign('top');
+        });
+
+
+        $phrase = $this->getPhrase()['title'];
+        $template->text($phrase, 540, 1203, function($font) {
+            $font->file(storage_path('app/stories/Roboto-Regular.ttf'));
+            $font->size(46);
+            $font->color('#99A2AD');
+            $font->align('center');
+            $font->valign('top');
+        });
+
+        return $template;
     }
 }

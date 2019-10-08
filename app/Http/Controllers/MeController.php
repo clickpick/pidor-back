@@ -7,7 +7,6 @@ use App\Http\Resources\UserResource;
 use App\PublishedStory;
 use App\Services\VkClient;
 use App\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use VK\Exceptions\Api\VKApiPrivateProfileException;
 use VK\Exceptions\VKApiException;
@@ -16,11 +15,13 @@ use VK\Exceptions\VKClientException;
 class MeController extends Controller
 {
 
-    public function me() {
+    public function me()
+    {
         return new UserResource(Auth::user());
     }
 
-    public function getFriends() {
+    public function getFriends()
+    {
         $user = Auth::user();
 
         try {
@@ -39,7 +40,15 @@ class MeController extends Controller
         return UserResource::collection($registeredFriends);
     }
 
-    public function postStory(PostStoryRequest $request) {
+    public function prepareStory()
+    {
+        $user = Auth::user();
+
+        return  $user->generateConfessionStory()->stream('data-url');
+    }
+
+    public function postStory(PostStoryRequest $request)
+    {
         $user = Auth::user();
 
         $user->postStory(PublishedStory::CONFESSION, $request->upload_url);

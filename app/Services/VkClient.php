@@ -57,8 +57,9 @@ class VkClient
 
     /**
      * @param $uploadUrl
+     * @param $image
      */
-    public function postStory($uploadUrl) {
+    public function postStory($uploadUrl, $image) {
 
         $client = new Client();
 
@@ -66,7 +67,7 @@ class VkClient
             'multipart' => [
                 [
                     'name'     => 'file',
-                    'contents' => fopen(storage_path('app/stories/story.png'), 'r')
+                    'contents' => $image->stream('jpg')
                 ],
             ]
         ]);
