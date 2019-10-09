@@ -36,7 +36,7 @@ class MeController extends Controller
         }
 
         /** @var array $friendIds */
-        $registeredFriends = User::whereIn('vk_user_id', $friendIds['items'])->paginate();
+        $registeredFriends = User::whereIn('vk_user_id', $friendIds['items'])->orderBy('pidor_rate', 'desc')->paginate();
 
         return UserResource::collection($registeredFriends);
     }
@@ -45,7 +45,7 @@ class MeController extends Controller
     {
         $user = Auth::user();
 
-        return  $user->generateConfessionStory()->stream('data-url');
+        return $user->generateConfessionStory()->stream('data-url');
     }
 
     public function postStory(PostStoryRequest $request)
@@ -59,7 +59,8 @@ class MeController extends Controller
         return new UserResource($user);
     }
 
-    public function givePidorRate(GivePidorRateRequest $request) {
+    public function givePidorRate(GivePidorRateRequest $request)
+    {
         $sender = Auth::user();
 
         $acceptor = User::find($request->acceptor_id);
